@@ -11,15 +11,18 @@ class Register {
 
   get messages () {
     return {
-      'email.required': 'Enter email address to be used for login',
-      'email.email': 'Email address is not valid',
-      'email.unique': 'There\'s already an account with this email address',
-      'password.required': 'Choose password for your account',
-      'password.min': 'Password needs to be at least 6 characters long.',
-      'role.required' : 'Debes indicar un rol al momento de registrarte!'
+      'email.required': 'Debe ingresar un correo',
+      'email.email': 'El correo ingresado no es válido',
+      'email.unique': 'Este correo ya se encuentra registrado',
+      'password.required': 'Debe escribir una contraseña para su cuenta',
+      'password.min': 'La contraseña debe tener al menos 6 caracteres.',
+      'role.required' : 'Se debe ingresar un rol para hacer el registro'
     }
   }
 
+  async fails (errors) {
+    return this.ctx.response.status(400).json(errors);
+  }
 }
 
 module.exports = Register
