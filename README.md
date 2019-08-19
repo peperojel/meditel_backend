@@ -48,13 +48,13 @@ Todas las solicitudes al servidor deben tener los siguientes headers:
     }
     ```
    * Response:
-      * `201 Created`: Success
+      * **201** Created: Success
       ```js
       {
         "message": "La cuenta se ha creado satisfactoriamente."
       }
       ```
-      * `400 Bad Request`: Validation Failed
+      * **400** Bad Request: Validation Failed
       ```js
       [
         {
@@ -76,7 +76,7 @@ Todas las solicitudes al servidor deben tener los siguientes headers:
     }
     ```
    * Response:
-      * `200 Ok`: Success
+      * **200** Ok: Success
       ```js
       {
         "type": "bearer",
@@ -84,13 +84,13 @@ Todas las solicitudes al servidor deben tener los siguientes headers:
         "refreshToken": "59ca4b9f60aeb64f1f76b61415960cf4BN2xPqeLcBXTA79bo+V1jHIkWR9jST8IQQaegr2oJ2sJdw6F0/goT2sQoqxDAGCk"
       }
       ```
-      * `401 Unauthorized`: Wrong credentials
+      * **401** Unauthorized: Wrong credentials
       ```js
       {
         "message": "No existe un usuario con dichas credenciales."
       }
       ```
-      * `400 Bad Request`: Validation Failed
+      * **400** Bad Request: Validation Failed
       ```js
       [
         {
