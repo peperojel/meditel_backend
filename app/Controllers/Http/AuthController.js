@@ -23,7 +23,7 @@ class AuthController {
             });
     }
 
-    // POST
+    // GET
     async login({ request, response, auth}) {
         const { email , password } = request.all();
         try {
@@ -33,7 +33,7 @@ class AuthController {
         }
         catch (errors) {
             return response.status(401).json({
-                message: 'Algo salió mal. Intenta otra vez o contacta a un administrador.'
+                message: 'No existe un usuario con dichas credenciales.'
                 });
         }
     }
