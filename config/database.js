@@ -59,7 +59,7 @@ module.exports = {
       user: Env.get('DB_USER', CLEARDB_DATABASE_URL.username),
       password: Env.get('DB_PASSWORD', CLEARDB_DATABASE_URL.password),
       database: Env.get('DB_DATABASE', CLEARDB_DATABASE_URL.pathname.substr(1))
-    } 
+    },
     debug: Env.get('DB_DEBUG', false)
   },
 
