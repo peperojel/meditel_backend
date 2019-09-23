@@ -8,8 +8,7 @@ const Hash = use('Hash')
 
 class User extends Model {
   static boot () {
-    super.boot()
-
+    super.boot();
     this.addHook('beforeSave', 'UserHook.hashPassword');
     this.addHook('beforeCreate', 'UserHook.setDefaults');
   }
@@ -25,7 +24,17 @@ class User extends Model {
    * @return {Object}
    */
   tokens () {
-    return this.hasMany('App/Models/Token')
+    return this.hasMany('App/Models/Token');
+  }
+
+  // roles
+  static get roles () {
+    return ['superadmin', 'admin', 'paciente', 'medico'];
+  }
+
+  // hide fields
+  static get hidden () {
+    return ['password', 'confirmation_token'];
   }
 }
 

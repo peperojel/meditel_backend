@@ -1,6 +1,7 @@
 'use strict'
 
 const User = use('App/Models/User');
+const Mail = use('Mail')
 
 class AuthController {
 
@@ -14,8 +15,14 @@ class AuthController {
         user.role = role;
         const res = await user.save();
         if (res) {
+            await Mail.send('emails.welcome', { token: user.confirmation_token }, (message) => {
+                message.to(user.email);
+                message.from('no-reply@meditel.cl', 'MediTel');
+                message.subject('Bienvenido a MediTel');
+              });
             return response.status(201).json({
-                message: 'La cuenta se ha creado satisfactoriamente.'
+                // Esta respuesta debe ser revisada
+                message: 'Se ha enviado un correo de verificación a ' + user.email
             });
         }
         return response.status(500).json({
@@ -23,7 +30,7 @@ class AuthController {
             });
     }
 
-    // GET
+    // POST
     async login({ request, response, auth}) {
         const { email , password } = request.all();
         try {
@@ -38,6 +45,29 @@ class AuthController {
         }
     }
 
+    //GET
+    async confirmEmail({ request, response, params, view}) {
+        // const bestFormat = request.accepts(['json', 'html']);
+        const token = params.token;
+        try{
+            const user = await User.findBy('confirmation_token', token);
+            if (user.verified) {
+                return response.status(422).json({
+                    message: "Este correo ya fue verificado"
+                });
+            }
+            user.verified = true;
+            await user.save();
+            return response.status(200).json({
+                message: "Su correo ha sido verificado"
+            });
+        }
+        catch (error) {
+            return response.status(400).json({
+                message: "Ha ocurrido un error en la verificación"
+            });
+        }
+    }
 }
 
-module.exports = AuthController
+module.exports = AuthController;
