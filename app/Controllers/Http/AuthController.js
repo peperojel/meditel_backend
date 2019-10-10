@@ -8,17 +8,19 @@ class AuthController {
     // POST
     async register({ request, response, auth }) {
 
-        const { email, password, role } = request.all();
+        const { email, password, role, nombre, apellido } = request.all();
         const user = new User();
         user.email = email;
         user.password = password;
         user.role = role;
+        user.nombre = nombre;
+        user.apellido = apellido;
         const res = await user.save();
         if (res) {
             await Mail.send('emails.welcome', { token: user.confirmation_token }, (message) => {
                 message.to(user.email);
                 message.from('no-reply@meditel.cl', 'MediTel');
-                message.subject('Bienvenido a MediTel');
+                message.subject('Bienvenido a MediTel ' + user.nombre);
               });
             return response.status(201).json({
                 // Esta respuesta debe ser revisada
