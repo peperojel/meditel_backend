@@ -39,22 +39,48 @@ class DoctorController {
    * Responde todos los doctores que están disponibles.
    * GET api/doctor/disponibles
    */
-  async getDisponibles ({ request, response }) {
-    // Implementar
+  async getDisponibles ({response }) {
+    //const doctor = await Doctor.findBy('available', 0);//cambiar a 1 para disponibles
+    //const doctor = await Doctor.all();
+    //response.send(doctor);
+    const data = Doctor.query();
+    data.where('available', 0);//CAMBIAR A 1 CUANDO SE CAMBIEN LOS ESTADOS
+    const res  = await data.fetch();
+    return response.status(201).json({
+      res
+    });
   }
-
-
   /**
    * Responde la información del doctor con doctor_id == id.
    * GET api/doctor/show/:id
    */
   async getInfo ({ params, response }) {
-    // Completar
+    // Completar con manejo de error
     const doctor = await Doctor.findBy('doctor_id', params.id);
     return response.status(201).json({
-      message: 'El nombre del doctor es ' + doctor.first_name
+      name: doctor.first_name,
+      lastname: doctor.last_name,
+      specialty: doctor.specialty,
+      rating: doctor.rating
     });
   }
+  async changeEstado ({ request, response, auth }) {
+    // Completar con manejo de error
+    const {id}= request.all()
+    //const doctor= await Doctor.findBy('doctor_id', id);
+    const doctor= await Doctor.findBy('doctor_id', id);
+    if (doctor.available){
+      doctor.available=0;
+    }else{
+      doctor.available=1;
+    }
+    await doctor.save();
+    return response.status(201).json({
+      message: "Estado cambiado exitosamente"
+    });
+  }
+
+
 
 }
 
