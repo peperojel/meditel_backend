@@ -13,6 +13,8 @@ class UserSchema extends Schema {
       table.string('role')
       table.boolean('verified').defaultTo(false)
       table.string('confirmation_token')
+      table.string('nombre')
+      table.string('apellido')
       table.timestamps()
     })
   }

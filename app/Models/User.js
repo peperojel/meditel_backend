@@ -27,6 +27,10 @@ class User extends Model {
     return this.hasMany('App/Models/Token');
   }
 
+  doctors () {
+    return this.hasOne('App/Models/Doctor');
+  }
+
   // roles
   static get roles () {
     return ['superadmin', 'admin', 'paciente', 'medico'];
