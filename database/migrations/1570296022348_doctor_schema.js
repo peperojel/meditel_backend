@@ -8,7 +8,7 @@ class DoctorSchema extends Schema {
     this.create('doctors', (table) => {
       table.increments();
       table.integer('user_id').unsigned().references('id').inTable('users').onDelete('CASCADE');
-      table.string('doctor_id');
+      table.string('id_doctor');
       table.string('first_name');
       table.string('last_name');
       table.string('specialty');
