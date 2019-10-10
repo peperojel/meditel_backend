@@ -9,6 +9,11 @@ class Doctor extends Model {
         this.addHook('beforeCreate', 'DoctorHook.setDefaults');
       }
 
+    
+  calendars () {
+        return this.hasMany('App/Models/Calendar');
+  }
+
 }
 
 module.exports = Doctor
