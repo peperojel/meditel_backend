@@ -38,6 +38,8 @@ class AuthController {
         try {
             const result = await auth.withRefreshToken().attempt(email, password);
             const user = await User.findBy('email', email);
+            result.nombre = user.nombre;
+            result.apellido = user.apellido;
             return response.status(200).json(result);
         }
         catch (errors) {
