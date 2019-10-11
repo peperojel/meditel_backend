@@ -13,7 +13,7 @@ class DoctorSchema extends Schema {
       table.string('last_name');
       table.string('specialty');
       table.float('rating', 2,2);
-      table.boolean('available');
+      table.boolean('disponible');
       table.timestamps();
     })
   }

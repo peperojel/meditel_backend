@@ -1,6 +1,7 @@
 'use strict'
 
 const Doctor = use('App/Models/Doctor');
+const Database = use('Database');
 
 /**
  * Controladores para la interacción con los Doctores.
@@ -64,17 +65,24 @@ class DoctorController {
       rating: doctor.rating
     });
   }
-  async changeEstado ({ request, response, auth }) {
+  async changeEstado ({ response, auth }) {
     // Completar con manejo de error
-    const {id}= request.all()
-    //const doctor= await Doctor.findBy('doctor_id', id);
-    const doctor= await Doctor.findBy('doctor_id', id);
-    if (doctor.available){
-      doctor.available=0;
-    }else{
-      doctor.available=1;
-    }
+
+    // Cargar al usuario asociado al token
+    const user = await auth.getUser();
+
+    // Cargar al médico cuyo user_id coincide con user.id
+    const doctor = await Database
+      .table('doctors')
+      .where('user_id', user.id)
+      .first();
+    
+    // Toggle de su estado
+    doctor.disponible = doctor.disponible == false ? true : false;
+
+    // Se guarda en la base de datos
     await doctor.save();
+
     return response.status(201).json({
       message: "Estado cambiado exitosamente"
     });
