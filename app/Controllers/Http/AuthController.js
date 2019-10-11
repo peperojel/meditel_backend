@@ -1,14 +1,15 @@
 'use strict'
 
 const User = use('App/Models/User');
-const Mail = use('Mail')
+const Doctor = use('App/Models/Doctor');
+const Mail = use('Mail');
 
 class AuthController {
 
     // POST
     async register({ request, response, auth }) {
 
-        const { email, password, role, nombre, apellido } = request.all();
+        const { email, password, role, nombre, apellido , specialty } = request.all();
         const user = new User();
         user.email = email;
         user.password = password;
@@ -16,6 +17,16 @@ class AuthController {
         user.nombre = nombre;
         user.apellido = apellido;
         const res = await user.save();
+
+        if (role == 'medico') {
+            const doctor = new Doctor();
+            doctor.specialty = specialty;
+            doctor.user_id = user.id
+            // Falta agregar un manejo de errores
+            await doctor.save();
+        }
+
+
         if (res) {
             await Mail.send('emails.welcome', { token: user.confirmation_token }, (message) => {
                 message.to(user.email);
