@@ -21,7 +21,6 @@ class DoctorController {
     doctor.user_id = user_id;
     doctor.specialty = specialty;
     doctor.rating = rating;
-
     try {
       await doctor.save();
       return response.status(201).json({
@@ -29,7 +28,8 @@ class DoctorController {
     });
     } catch (error) {
         return response.status(500).json({
-          message: 'Algo salió mal. Intenta otra vez o contacta a un administrador.'
+          message: 'Algo salió mal. Intenta otra vez o contacta a un administrador.',
+          error
         });
     }
   }
@@ -63,20 +63,26 @@ class DoctorController {
       rating: doctor.rating
     });
   }
-  async changeEstado ({ response, auth }) {
+  async changeEstado ({ request, response, auth }) {
+
+    const {disponible} = request.all();
+
     // Completar con manejo de error
 
     // Cargar al usuario asociado al token
     const user = await auth.getUser();
 
     // Cargar al médico cuyo user_id coincide con user.id
-    const doctor = await Database
+    const doctor_data = await Database
       .table('doctors')
       .where('user_id', user.id)
       .first();
     
-    // Toggle de su estado
-    doctor.disponible = doctor.disponible == false ? true : false;
+    const idDoctor = doctor_data.id_doctor;
+    const doctor = await Doctor.findBy('id_doctor', idDoctor);
+
+    // Cambio de estado
+    doctor.disponible = disponible;
 
     // Se guarda en la base de datos
     await doctor.save();
