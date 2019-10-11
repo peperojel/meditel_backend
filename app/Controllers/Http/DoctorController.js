@@ -15,7 +15,7 @@ class DoctorController {
   async create ({ request, response , auth }) {
     const user = await auth.getUser();
     const user_id = user.id;
-    const { first_name, last_name, specialty, rating } = request.all();
+    const { specialty, rating } = request.all();
     
     const doctor = new Doctor();
     doctor.user_id = user_id;
