@@ -19,8 +19,6 @@ class DoctorController {
     
     const doctor = new Doctor();
     doctor.user_id = user_id;
-    doctor.first_name = first_name;
-    doctor.last_name = last_name;
     doctor.specialty = specialty;
     doctor.rating = rating;
 

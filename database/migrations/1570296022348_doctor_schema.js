@@ -9,8 +9,6 @@ class DoctorSchema extends Schema {
       table.increments();
       table.integer('user_id').unsigned().references('id').inTable('users').onDelete('CASCADE');
       table.string('id_doctor');
-      table.string('first_name');
-      table.string('last_name');
       table.string('specialty');
       table.float('rating', 2,2);
       table.boolean('disponible');
