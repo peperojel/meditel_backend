@@ -7,7 +7,7 @@ const Mail = use('Mail');
 class AuthController {
 
     // POST
-    async register({ request, response, auth }) {
+    async register({ request, response }) {
 
         const { email, password, role, nombre, apellido , specialty } = request.all();
         const user = new User();
@@ -18,6 +18,8 @@ class AuthController {
         user.apellido = apellido;
         const res = await user.save();
 
+
+        // Si el rol es médico se crea un perfil médico con la especialidad al momento del registro
         if (role == 'medico') {
             const doctor = new Doctor();
             doctor.specialty = specialty;
