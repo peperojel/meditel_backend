@@ -30,7 +30,7 @@ class AgendaController {
         }
       }
 
-    async getAgenda ({ response }) {
+    async getAgenda ({ response, auth }) {
     // Cargar al usuario asociado al token
     const user = await auth.getUser();
 
@@ -53,13 +53,13 @@ class AgendaController {
       } catch (error) {
           return response.status(500).json({
             message: 'Algo salió mal. Intenta otra vez o contacta a un administrador.',
-            error
+            error}
           });
       }
   }
 
   async deleteBloque ({ params, response }) {
-
+    //TO DO: comprobar que el bloque corresponde al dr (solicitar token)
     const bloque = await Agenda.findBy('id_bloque', params.id);
     // Se elimina de la base de datos
     await bloque.delete();

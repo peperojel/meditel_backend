@@ -2,6 +2,7 @@
 
 const Doctor = use('App/Models/Doctor');
 const Database = use('Database');
+const User = use('App/Models/User')
 
 /**
  * Controladores para la interacción con los Doctores.
@@ -66,12 +67,13 @@ class DoctorController {
   async getInfo ({ params, response }) {
     // Completar con manejo de error
     const doctor = await Doctor.findBy('id_doctor', params.id);
-    const user = await User.findBy('user_id', doctor.user_id);//CORROBORAR NOMBRES
+    const user = await User.findBy('id', doctor.user_id);//CORROBORAR NOMBRES
     return response.status(201).json({
       name: user.nombre,
       lastname: user.apellido,
       specialty: doctor.specialty,
-      rating: doctor.rating
+      rating: doctor.rating,
+      disponible: doctor.disponible 
     });
   }
   async changeEstado ({ request, response, auth }) {
