@@ -24,6 +24,8 @@ class AuthController {
             const doctor = new Doctor();
             doctor.specialty = specialty;
             doctor.user_id = user.id
+            //new Agenda();
+            
             // Falta agregar un manejo de errores
             await doctor.save();
         }

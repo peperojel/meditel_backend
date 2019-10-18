@@ -43,7 +43,7 @@ class DoctorController {
     //const doctor = await Doctor.all();
     //response.send(doctor);
     const data = Doctor.query();
-    data.where('available', 0);//CAMBIAR A 1 CUANDO SE CAMBIEN LOS ESTADOS
+    data.where('disponible', 1);
     const res  = await data.fetch();
     return response.status(201).json({
       res
@@ -55,10 +55,11 @@ class DoctorController {
    */
   async getInfo ({ params, response }) {
     // Completar con manejo de error
-    const doctor = await Doctor.findBy('doctor_id', params.id);
+    const doctor = await Doctor.findBy('id_doctor', params.id);
+    const user = await User.findBy('user_id', doctor.user_id);//CORROBORAR NOMBRES
     return response.status(201).json({
-      name: doctor.first_name,
-      lastname: doctor.last_name,
+      name: user.nombre,
+      lastname: user.apellido,
       specialty: doctor.specialty,
       rating: doctor.rating
     });

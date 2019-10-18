@@ -22,3 +22,4 @@ Route.get('/', () => {
 
 Route.group(use('App/Routes/Auth')).prefix('api/auth');
 Route.group(use('App/Routes/Doctor')).prefix('api/doctor');
+Route.group(use('App/Routes/Agenda')).prefix('api/agenda');
