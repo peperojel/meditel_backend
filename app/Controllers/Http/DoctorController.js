@@ -42,12 +42,22 @@ class DoctorController {
     //const doctor = await Doctor.findBy('available', 0);//cambiar a 1 para disponibles
     //const doctor = await Doctor.all();
     //response.send(doctor);
-    const data = Doctor.query();
+    const data = await Database
+      .select('id_doctor', 'nombre', 'apellido', 'specialty', 'rating')
+      .from('doctors')
+      .rightJoin('users', 'users.id', 'doctors.user_id')
+      .where('disponible', true);
+
+      return response.status(201).json({
+        data
+      });
+
+    /* const data = Doctor.query();
     data.where('disponible', 1);
     const res  = await data.fetch();
     return response.status(201).json({
       res
-    });
+    }); */
   }
   /**
    * Responde la información del doctor con doctor_id == id.
