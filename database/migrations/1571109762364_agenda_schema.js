@@ -7,7 +7,7 @@ class AgendaSchema extends Schema {
   up () {
     this.create('agenda', (table) => {
       table.increments();
-      table.string('id_doctor').references('id_doctor').inTable('doctors').onDelete('CASCADE');;
+      table.string('id_doctor').references('id_doctor').inTable('doctors').onDelete('CASCADE');
       table.string('id_bloque');
       table.date("startDate");
       table.date("endDate");

@@ -30,6 +30,9 @@ class User extends Model {
   doctors () {
     return this.hasOne('App/Models/Doctor');
   }
+  pacientes () {
+    return this.hasMany('App/Models/Paciente');
+  }
 
   // roles
   static get roles () {

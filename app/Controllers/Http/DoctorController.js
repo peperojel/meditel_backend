@@ -40,34 +40,38 @@ class DoctorController {
    * GET api/doctor/disponibles
    */
   async getDisponibles ({response }) {
-    //const doctor = await Doctor.findBy('available', 0);//cambiar a 1 para disponibles
-    //const doctor = await Doctor.all();
-    //response.send(doctor);
-    const data = await Database
-      .select('id_doctor', 'nombre', 'apellido', 'specialty', 'rating')
-      .from('doctors')
-      .rightJoin('users', 'users.id', 'doctors.user_id')
-      .where('disponible', true);
-
-      return response.status(201).json({
-        data
-      });
-
-    /* const data = Doctor.query();
-    data.where('disponible', 1);
-    const res  = await data.fetch();
+    //   const data = Doctor.query();
+    //data.select('id_doctor', 'specialty').where('disponible', 1);
+    //const res  = await data.fetch();
+    //return response.status(201).json({
+    //  res
+    //});
+    const data = await Doctor.query().select('id_doctor', 'specialty', 'nombre', 'apellido', 'rating', 'disponible')
+    .innerJoin('users','doctors.user_id', 'users.id').where('disponible', 1).fetch();
     return response.status(201).json({
-      res
-    }); */
+      data
+    });
+  }
+  /**
+   * Responde todos los doctores independiente del estado.
+   * GET api/doctor/all
+   */
+  async getDoctors ({response }) {
+    
+    const data = await Doctor.query().select('id_doctor', 'specialty', 'nombre', 'apellido', 'rating', 'disponible')
+    .innerJoin('users','doctors.user_id', 'users.id').fetch();
+    return response.status(201).json({
+      data
+    });
   }
   /**
    * Responde la información del doctor con doctor_id == id.
    * GET api/doctor/show/:id
    */
   async getInfo ({ params, response }) {
-    // Completar con manejo de error
+    
     const doctor = await Doctor.findBy('id_doctor', params.id);
-    const user = await User.findBy('id', doctor.user_id);//CORROBORAR NOMBRES
+    const user = await User.findBy('id', doctor.user_id);
     return response.status(201).json({
       name: user.nombre,
       lastname: user.apellido,
