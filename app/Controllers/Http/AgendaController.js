@@ -53,7 +53,7 @@ class AgendaController {
       } catch (error) {
           return response.status(500).json({
             message: 'Algo salió mal. Intenta otra vez o contacta a un administrador.',
-            error}
+            error
           });
       }
   }

@@ -2,14 +2,16 @@
 
 const User = use('App/Models/User');
 const Doctor = use('App/Models/Doctor');
+const Paciente = use('App/Models/Paciente');
 const Mail = use('Mail');
+const Helpers = use('Helpers')
 
 class AuthController {
 
     // POST
     async register({ request, response }) {
 
-        const { email, password, role, nombre, apellido , specialty } = request.all();
+        const { email, password, role, nombre, apellido , specialty,nacimiento,nacionalidad } = request.all();
         const user = new User();
         user.email = email;
         user.password = password;
@@ -24,16 +26,26 @@ class AuthController {
             const doctor = new Doctor();
             doctor.specialty = specialty;
             doctor.user_id = user.id
-            //new Agenda();
             
-            // Falta agregar un manejo de errores
+            
             await doctor.save();
         }
+        if (role == 'paciente') {
+            const paciente = new Paciente();
+            paciente.nacionalidad = nacionalidad;
+            paciente.nacimiento = nacimiento;
+            paciente.user_id = user.id
+          
+            await paciente.save();
+        }
+        
 
 
         if (res) {
-            await Mail.send('emails.welcome', { token: user.confirmation_token }, (message) => {
+            await Mail.send('emails.welcome', { token: user.confirmation_token, name: user.nombre }, (message) => {
                 message.to(user.email);
+                message.embed(Helpers.publicPath('logo-meditel-color.png'), 'logo');
+                message.embed(Helpers.publicPath('logo-meditel-blanco.png'), 'logo2');
                 message.from('no-reply@meditel.cl', 'MediTel');
                 message.subject('Bienvenido a MediTel ' + user.nombre);
               });

@@ -8,5 +8,5 @@ module.exports = () => {
     Route.get('disponibles', 'DoctorController.getDisponibles').middleware('jwtAuth');
     Route.get('show/:id', 'DoctorController.getInfo').middleware('jwtAuth');
     Route.post('estado', 'DoctorController.changeEstado').middleware('jwtAuth');
-
+    Route.get('all', 'DoctorController.getDoctors').middleware('jwtAuth');
 }
