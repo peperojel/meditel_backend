@@ -123,7 +123,7 @@ class HistorialController {
         const role= user.role;
         if (role == 'medico') {
             try {
-                const data = await Historial.query().select('com_pac')
+                const data = await Historial.query().select('com_pac','ev_pac')
             .where('id_paciente',params.id)
             .fetch();
             return response.status(201).json({
@@ -141,7 +141,7 @@ class HistorialController {
         if (role == 'paciente') {
             
             try {
-                const data = await Historial.query().select('com_doc')
+                const data = await Historial.query().select('com_doc','ev_doc')
             .where('id_doctor',params.id)
             .fetch();
             return response.status(201).json({
