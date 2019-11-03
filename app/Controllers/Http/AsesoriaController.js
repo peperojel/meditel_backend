@@ -120,7 +120,7 @@ class AsesoriaController {
             .first();
             const idPaciente = paciente_data.id_paciente;
             try {
-                const data = await Asesoria.query().select('id_doctor','nombre', 'apellido', 'fecha', 'id_asesoria')
+                const data = await Asesoria.query().select('doctors.id_doctor','nombre', 'apellido', 'fecha', 'id_asesoria')
             .innerJoin('doctors','asesorias.id_doctor', 'doctors.id_doctor').where('id_paciente',idPaciente)
             .innerJoin('users','doctors.user_id', 'users.id').fetch();
             return response.status(201).json({

@@ -84,7 +84,7 @@ class HistorialController {
             const doctor_data = await Doctor.findBy('user_id', user.id);
             const idDoctor = doctor_data.id_doctor;
             try {
-                const data = await Historial.query().select('nombre', 'apellido', 'fecha', 'id_asesoria','ev_pac','com_pac','diagnostico')
+                const data = await Historial.query().select('pacientes.id_pacientes','nombre', 'apellido', 'fecha', 'id_asesoria','ev_pac','com_pac','diagnostico')
             .innerJoin('pacientes','historials.id_paciente', 'pacientes.id_pacientes').where('id_doctor',idDoctor)
             .innerJoin('users','pacientes.user_id', 'users.id').fetch();
             return response.status(201).json({
@@ -103,7 +103,7 @@ class HistorialController {
             const paciente_data =  await Paciente.findBy('user_id', user.id);
             const idPaciente = paciente_data.id_paciente;
             try {
-                const data = await Historial.query().select('nombre', 'apellido', 'fecha', 'id_asesoria','ev_doc','com_doc','diagnostico')
+                const data = await Historial.query().select('doctors.id_doctor','nombre', 'apellido', 'fecha', 'id_asesoria','ev_doc','com_doc','diagnostico')
             .innerJoin('doctors','historials.id_doctor', 'doctors.id_doctor').where('id_paciente',idPaciente)
             .innerJoin('users','doctors.user_id', 'users.id').fetch();
             return response.status(201).json({
