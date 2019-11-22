@@ -67,6 +67,10 @@ class AuthController {
             const user = await User.findBy('email', email);
             result.nombre = user.nombre;
             result.apellido = user.apellido;
+            if ( user.role === 'medico') {            
+                const doctor = user.doctors().fetch();    
+                result.id_doctor = doctor.id_doctor
+            }
             return response.status(200).json(result);
         }
         catch (errors) {
