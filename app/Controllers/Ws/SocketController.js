@@ -8,7 +8,7 @@ class SocketController {
     this.request = request
     this.auth = auth
     this.sc = new SocketConnection()
-    this.storeConnection(this.sc)
+    this.storeConnection()
   }
 
   onMessage (message) {
@@ -16,14 +16,7 @@ class SocketController {
 
     switch (type) {
       case 'asesoria:request':
-        //TODO: DEBE SER CAMBIADO A BROADCAST
-        this.socket.broadcastToAll('message', {
-          type: 'asesoria:request',
-          data: {
-            nombre: this.auth.user.nombre,
-            apellido: this.auth.user.apellido
-          }
-        });
+        this.sendRequest();
         break;
       case 'asesoria:start':
         this.socket.broadcastToAll('message', {
@@ -32,8 +25,8 @@ class SocketController {
         });
         break;
       case 'asesoria:ready':
-        this.updateState(this.sc,this.socket.topic)
-      break;
+        this.updateState()
+        break;
       case 'asesoria:signaling':
         this.socket.broadcast('message', {
           type: 'asesoria:signaling',
@@ -41,7 +34,7 @@ class SocketController {
         });
         break;
       default:
-        console.log("Default case")
+        // console.log("Default case")
       break;
     }
   }
@@ -51,12 +44,44 @@ class SocketController {
   }
 
   // Métodos de uso interno
-  async storeConnection (sc) {
-    sc.topic = this.socket.topic
+  async sendRequest () {
+    const doctor_socket = await SocketConnection
+      .query()
+      .where({
+        topic: this.socket.topic,
+        role: 'medico'
+      })
+      .first()
+    
+    this.socket.emitTo('message',{
+      type: 'asesoria:request',
+      data: {
+        nombre: this.auth.user.nombre,
+        apellido: this.auth.user.apellido,
+        from_socket: this.socket.id
+        }
+      },
+      [doctor_socket.socket_id]
+    )
+  }
+
+
+  async storeConnection () {
+    const sc = await SocketConnection.findOrCreate(
+      { 
+        topic: this.socket.topic,
+        user_id: this.auth.user.uid 
+      },
+      { 
+        topic: this.socket.topic,
+        user_id: this.auth.user.uid,
+        role: this.auth.user.role,
+      }
+    )
     sc.socket_id = this.socket.id
-    sc.role = this.auth.user.role
     sc.is_ready = false
-    await sc.save()
+    this.sc = sc
+    await sc.save();
   }
 
   async updateState (sc, topic) {
@@ -68,11 +93,8 @@ class SocketController {
             topic: topic,
             is_ready: true})
           .fetch()
-    console.log(part.toJSON().length)
     if(part.toJSON().length === 2) {
       this.sendReady();
-    } else {
-      this.sendInit();
     }
   }
 
@@ -85,14 +107,6 @@ class SocketController {
       type: 'asesoria:ready',
       data: ''
     });
-  }
-
-  //TODO: Eliminar esta función de testing
-  sendInit = () => {
-    this.socket.emit('message', {
-      type: 'asesoria:initiator',
-      data: ''
-    })
   }
 }
 

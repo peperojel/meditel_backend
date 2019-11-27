@@ -8,6 +8,7 @@ class SocketConnectionSchema extends Schema {
     this.create('socket_connections', (table) => {
       table.increments()
       table.string('topic')
+      table.string('user_id')
       table.string('socket_id')
       table.string('role')
       table.boolean('is_ready')
