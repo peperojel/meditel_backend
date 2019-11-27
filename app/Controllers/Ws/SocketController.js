@@ -42,6 +42,18 @@ class SocketController {
           [data.to_socket]
         );
         break;
+      case 'asesoria:diagnostic':
+        this.socket.emitTo('message',
+          {
+            type: 'asesoria:diagnostic',
+            data:
+            {
+              from_socket: this.socket.id
+            }
+          },
+          [data.to_socket]
+        );
+        break;
       case 'asesoria:ready':
         this.updateState()
         break;
