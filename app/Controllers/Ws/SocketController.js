@@ -66,6 +66,30 @@ class SocketController {
           [data.to_socket]
         );
         break;
+      case 'chat:videollamada_accept':
+        this.socket.emitTo('message',
+          {
+            type: 'chat:videollamada_accept',
+            data:
+            {
+              from_socket: this.socket.id
+            }
+          },
+          [data.to_socket]
+        );
+        break;
+      case 'chat:videollamada_refuse':
+        this.socket.emitTo('message',
+          {
+            type: 'chat:videollamada_refuse',
+            data:
+            {
+              from_socket: this.socket.id
+            }
+          },
+          [data.to_socket]
+        );
+        break;
       case 'asesoria:signaling':
         this.socket.broadcast('message', {
           type: 'asesoria:signaling',
