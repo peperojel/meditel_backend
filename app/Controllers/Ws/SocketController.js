@@ -30,6 +30,18 @@ class SocketController {
           [data.to_socket]
         );
         break;
+      case 'asesoria:refuse':
+        this.socket.emitTo('message',
+          {
+            type: 'asesoria:refuse',
+            data:
+            {
+              from_socket: this.socket.id
+            }
+          },
+          [data.to_socket]
+        );
+        break;
       case 'asesoria:ready':
         this.updateState()
         break;
