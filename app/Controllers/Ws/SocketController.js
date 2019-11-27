@@ -18,11 +18,17 @@ class SocketController {
       case 'asesoria:request':
         this.sendRequest();
         break;
-      case 'asesoria:start':
-        this.socket.broadcastToAll('message', {
-          type: 'asesoria:start',
-          data: 'Wena'
-        });
+      case 'asesoria:accept':
+        this.socket.emitTo('message',
+          {
+            type: 'asesoria:accept',
+            data:
+            {
+              from_socket: this.socket.id
+            }
+          },
+          [data.to_socket]
+        );
         break;
       case 'asesoria:ready':
         this.updateState()
