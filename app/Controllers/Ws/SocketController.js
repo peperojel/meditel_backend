@@ -53,6 +53,18 @@ class SocketController {
           [data.to_socket]
         );
         break;
+      case 'asesoria:finished':
+        this.socket.emitTo('message',
+          {
+            type: 'asesoria:finished',
+            data:
+            {
+              from_socket: this.socket.id
+            }
+          },
+          [data.to_socket]
+        );
+        break;
       // Lógica de chat
       case 'chat:videollamada_request':
         this.socket.emitTo('message',
