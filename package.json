@@ -30,6 +30,7 @@
     "@adonisjs/websocket": "^1.0.12",
     "adonis-scheduler": "^3.0.2",
     "firebase-admin": "^8.8.0",
+    "moments": "0.0.2",
     "mysql": "^2.17.1",
     "url-parse": "^1.4.7"
   },
