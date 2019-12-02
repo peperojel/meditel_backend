@@ -9,7 +9,22 @@ const Agenda =use('App/Models/Agenda');
 class AgendaController {
 
     async create ({ request, response , auth }) {
+        // Pasar request a formato array [{bloque1}, {bloque2}]
+        //TODO: Se deben indicar las claves relevantes del Json
+        const json_data = request.all()
+        const arr = Object.keys(json_data).map( (key) => {
+            var json_par = {
+                startDate: json_data[key].startDate,
+                endDate: json_data[key].endDate,
+                doctor_id: "123"
+            }
+            return json_par
+        });
+    
+        console.log(arr)
+        // response.created({message: 'Ok'})
         const user = await auth.getUser();
+        
     // Cargar al médico cuyo user_id coincide con user.id
         const doctor_data = await Database
         .table('doctors')
