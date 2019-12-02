@@ -9,3 +9,6 @@ tmp
 
 # The development sqlite file
 database/development.sqlite
+
+# firebase credentials
+meditel-prototype-v1-firebase-adminsdk-kapp9-e64042785a.json
