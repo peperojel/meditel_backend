@@ -98,13 +98,13 @@ class AsesoriaController {
             .first();
             const idDoctor = doctor_data.id_doctor;
             try {
-                const data = await Asesoria.query().select('pacientes.id_paciente','nombre', 'apellido', 'fecha', 'id_asesoria')
-            .innerJoin('pacientes','asesorias.id_paciente', 'pacientes.id_pacientes').where({id_doctor:idDoctor, estado:'futura'})
-            .innerJoin('users','pacientes.user_id', 'users.id').fetch();
-            return response.status(201).json({
-                data
-            });
-              } catch (error) {
+                const appointment = await Asesoria.query().select('pacientes.id_paciente','nombre', 'apellido', 'fecha', 'id_asesoria')
+                    .innerJoin('pacientes','asesorias.id_paciente', 'pacientes.id_paciente').where({id_doctor:idDoctor, estado:'futura'})
+                    .innerJoin('users','pacientes.user_id', 'users.id').fetch();
+                return response.status(201).json({
+                    appointment
+                });
+            } catch (error) {
                   return response.status(500).json({
                     message: 'Algo salió mal. Intenta otra vez o contacta a un administrador.',
                     error

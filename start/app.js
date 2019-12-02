@@ -1,5 +1,6 @@
 'use strict'
 
+var path = require('path');
 /*
 |--------------------------------------------------------------------------
 | Providers
@@ -19,7 +20,9 @@ const providers = [
   '@adonisjs/validator/providers/ValidatorProvider',
   '@adonisjs/mail/providers/MailProvider',
   '@adonisjs/framework/providers/ViewProvider',
-  '@adonisjs/websocket/providers/WsProvider'
+  '@adonisjs/websocket/providers/WsProvider',
+  'adonis-scheduler/providers/SchedulerProvider',
+  path.join(__dirname, '..', 'providers', 'FirebaseAdmin','FirebaseAdminProvider')
 ]
 
 /*
@@ -32,7 +35,8 @@ const providers = [
 |
 */
 const aceProviders = [
-  '@adonisjs/lucid/providers/MigrationsProvider'
+  '@adonisjs/lucid/providers/MigrationsProvider',
+  'adonis-scheduler/providers/CommandsProvider'
 ]
 
 /*
@@ -47,7 +51,9 @@ const aceProviders = [
 |   { Route: 'Adonis/Src/Route' }
 |
 */
-const aliases = {}
+const aliases = {
+  Scheduler: 'Adonis/Addons/Scheduler'
+}
 
 /*
 |--------------------------------------------------------------------------

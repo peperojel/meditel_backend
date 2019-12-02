@@ -16,7 +16,7 @@ class AgendaController {
         .where('user_id', user.id)
         .first(); 
         const idDoctor = doctor_data.id_doctor;
-        //const { data } = request.all();
+        //const { startDate', 'endDate' } = request.all();
         await Agenda.query().where({id_doctor:idDoctor}).delete();
 
         //const agenda = new Agenda();
