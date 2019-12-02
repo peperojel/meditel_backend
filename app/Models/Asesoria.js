@@ -8,6 +8,11 @@ class Asesoria extends Model {
         super.boot();
         this.addHook('beforeCreate', 'AsesoriaHook.setDefaults');
     }
+    static castDates(field, value) {
+      if (field === 'fecha') {
+        return value.format('DD-MM-YYYY HH:mm:ss')
+      }
+    }
     pacientes () {
         return this.hasMany('App/Models/Paciente');
       }

@@ -6,7 +6,9 @@ module.exports = () => {
 
     Route.post('create', 'AsesoriaController.create').middleware('jwtAuth');
     Route.get('asesorias', 'AsesoriaController.getAsesorias').middleware('jwtAuth');
-    //Route.get('show/:id', 'PacienteController.getInfo').middleware('jwtAuth');
     Route.post('cancelar', 'AsesoriaController.deleteAsesoria').middleware('jwtAuth');
-    //Route.get('all', 'DoctorController.getDoctors').middleware('jwtAuth');
+    Route.get('comentarios/:id', 'AsesoriaController.getComentarios').middleware('jwtAuth');
+    Route.post('final', 'AsesoriaController.final').middleware('jwtAuth');
+    Route.get('historial', 'AsesoriaController.getHistorial').middleware('jwtAuth');
+    Route.get('agendados/:id', 'AsesoriaController.getAgendados').middleware('jwtAuth');
 } 
