@@ -25,5 +25,4 @@ Route.group(use('App/Routes/Doctor')).prefix('api/doctor');
 Route.group(use('App/Routes/Agenda')).prefix('api/agenda');
 Route.group(use('App/Routes/Paciente')).prefix('api/paciente');
 Route.group(use('App/Routes/Asesoria')).prefix('api/asesoria');
-Route.group(use('App/Routes/Historial')).prefix('api/historial');
 Route.group(use('App/Routes/FirebaseToken')).prefix('api/firebase');

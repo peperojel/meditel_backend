@@ -8,6 +8,9 @@ class Agenda extends Model {
         super.boot();
         this.addHook('beforeCreate', 'AgendaHook.setDefaults');
     }
+    doctors () {
+        return this.hasMany('App/Models/Doctor');
+      }
 }
 
 module.exports = Agenda
