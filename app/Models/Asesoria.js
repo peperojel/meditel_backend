@@ -7,7 +7,7 @@ class Asesoria extends Model {
     static boot () {
         super.boot();
         this.addHook('beforeCreate', 'AsesoriaHook.setDefaults');
-        // this.addHook('beforeSave' , 'AsesoriaHook.fixFecha2')
+        this.addHook('beforeSave' , 'AsesoriaHook.fixFecha2');
         this.addHook('afterFetch' , 'AsesoriaHook.fixFecha');
     }
     static castDates(field, value) {
