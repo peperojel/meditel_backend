@@ -9,8 +9,8 @@ class AgendaSchema extends Schema {
       table.increments();
       table.string('id_doctor').references('id_doctor').inTable('doctors').onDelete('CASCADE');
       table.string('id_bloque');
-      table.datetime("startDate");
-      table.datetime("endDate");
+      table.string("startDate");
+      table.string("endDate");
       table.timestamps();
     })
   }
