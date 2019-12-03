@@ -18,7 +18,7 @@ Transforma a zona horaria chilena el datetime de un batch de asesorías
 */
 AsesoriaHook.fixFecha = async (asesoriaArray) => {
     var newArray = asesoriaArray.map( (item) => {
-        item.fecha = moment(item.fecha).utcOffset("-03:00").format()
+        item.fecha = moment(item.fecha + ' -03:00', "YYYY-MM-DD HH:mm:ss Z").utcOffset("-03:00").format()
     })
 
     return newArray
