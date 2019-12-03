@@ -9,57 +9,38 @@ const Agenda =use('App/Models/Agenda');
 class AgendaController {
 
     async create ({ request, response , auth }) {
-        // Pasar request a formato array [{bloque1}, {bloque2}]
-        //TODO: Se deben indicar las claves relevantes del Json
-        const json_data = request.all()
-        const arr = Object.keys(json_data).map( (key) => {
-            var json_par = {
-                startDate: json_data[key].startDate,
-                endDate: json_data[key].endDate,
-                doctor_id: "123"
-            }
-            return json_par
-        });
-    
-        console.log(arr)
-        // response.created({message: 'Ok'})
-        const user = await auth.getUser();
-        
-    // Cargar al médico cuyo user_id coincide con user.id
-        const doctor_data = await Database
-        .table('doctors')
-        .where('user_id', user.id)
-        .first(); 
-        const idDoctor = doctor_data.id_doctor;
-        //const { startDate', 'endDate' } = request.all();
-        await Agenda.query().where({id_doctor:idDoctor}).delete();
 
-        //const agenda = new Agenda();
-        //agenda.id_doctor = idDoctor;
-        //agenda.startDate = data.startDate;
-        //agenda.endDate = data.endDate;
-        try {
-          //await agenda.save();
-          const usersData = request.collect(['id_doctor','startDate', 'endDate']);
-          await Agenda.createMany(usersData);
-          return response.status(201).json({
-            message: "Bloque de agenda se ha creado exitosamente "
+        const bloquesBruto = request.all()
+        const doctor_data = auth.user.doctors().fetch()
+        const idDoctor = doctor_data.id_doctor;
+        const bloquesReady = Object.keys(bloquesBruto).map( (key) => {
+            var json_ready = {
+                startDate: bloquesBruto[key].startDate,
+                endDate: bloquesBruto[key].endDate,
+                doctor_id: idDoctor
+            }
+            return json_ready
         });
+
+        try {
+            await Agenda.query().where({id_doctor:idDoctor}).delete();
+            await Agenda.createMany(bloquesReady);
+            return response.status(201).json({
+                message: "Bloque de agenda se ha creado exitosamente "
+            });
         } catch (error) {
             return response.status(500).json({
-              message: 'Algo salió mal. Intenta otra vez o contacta a un administrador.',
-              error
+                message: 'Algo salió mal. Intenta otra vez o contacta a un administrador.',
+                error
             });
         }
     }
 
     async getAgenda ({params, response}) {
-          try {
+        try {
             const data = await Agenda.query().select( 'startDate','endDate')
-            .where({id_doctor:params.id}).fetch();
-            return response.status(201).json({
-                data
-            });
+                .where({id_doctor:params.id}).fetch();
+            return response.status(201).json({data});
             } catch (error) {
                 return response.status(500).json({
                     message: 'Algo salió mal. Intenta otra vez o contacta a un administrador.',
@@ -67,8 +48,7 @@ class AgendaController {
                   });
               }
             
-      }      
-   
+    }
 }
 
 module.exports = AgendaController

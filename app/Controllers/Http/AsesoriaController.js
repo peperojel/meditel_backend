@@ -6,12 +6,12 @@ const Paciente =use('App/Models/Paciente');
 const Asesoria =use('App/Models/Asesoria');
 
 class AsesoriaController {
+
     async create ({ request, response , auth }) {
-        const user = await auth.getUser();
     // Cargar al paciente cuyo user_id coincide con user.id
         const paciente_data = await Database
         .table('pacientes')
-        .where('user_id', user.id)
+        .where('user_id', auth.user.id)
         .first();
         
         const idPaciente = paciente_data.id_paciente;
@@ -19,8 +19,9 @@ class AsesoriaController {
         
         const asesoria = new Asesoria();
         asesoria.id_doctor = id_doctor;
-        asesoria.id_paciente= idPaciente;
-        asesoria.fecha=fecha;
+        asesoria.id_paciente = idPaciente;
+        asesoria.fecha = fecha;
+    
         try {
           await asesoria.save();
           return response.status(201).json({
@@ -32,8 +33,9 @@ class AsesoriaController {
               error
             });
         }
-      }
-      async deleteAsesoria ({ request, response,auth }) {
+    }
+
+    async deleteAsesoria ({ request, response,auth }) {
         const { id_asesoria } = request.all();
         const asesoria = await Asesoria.findBy('id_asesoria', id_asesoria);
         const user = await auth.getUser();
@@ -61,6 +63,7 @@ class AsesoriaController {
 
             }
         }
+
         if (role == 'paciente') {
             // Cargar al paciente cuyo user_id coincide con user.id
             const paciente_data = await Database
@@ -84,10 +87,9 @@ class AsesoriaController {
 
             }
         }
-       
-      
-      }
-      async getAsesorias ({response, auth }) {
+    }
+
+    async getAsesorias ({response, auth }) {
         const user = await auth.getUser();
         const role= user.role;
         if (role == 'medico') {
@@ -101,17 +103,17 @@ class AsesoriaController {
                 const appointment = await Asesoria.query().select('pacientes.id_paciente','nombre', 'apellido', 'fecha', 'id_asesoria')
                     .innerJoin('pacientes','asesorias.id_paciente', 'pacientes.id_paciente').where({id_doctor:idDoctor, estado:'futura'})
                     .innerJoin('users','pacientes.user_id', 'users.id').fetch();
-                return response.status(201).json({
-                    appointment
-                });
+       
+                return response.status(201).json( {appointment} );
             } catch (error) {
+                console.log(error)
                   return response.status(500).json({
                     message: 'Algo salió mal. Intenta otra vez o contacta a un administrador.',
                     error
                   });
-              }
-            
+              }   
         }
+
         if (role == 'paciente') {
             // Cargar al paciente cuyo user_id coincide con user.id
             const paciente_data = await Database
@@ -121,11 +123,9 @@ class AsesoriaController {
             const idPaciente = paciente_data.id_paciente;
             try {
                 const data = await Asesoria.query().select('doctors.id_doctor','nombre', 'apellido', 'fecha', 'id_asesoria')
-            .innerJoin('doctors','asesorias.id_doctor', 'doctors.id_doctor').where({id_paciente: idPaciente, estado:'futura'})
-            .innerJoin('users','doctors.user_id', 'users.id').fetch();
-            return response.status(201).json({
-                data
-            });
+                    .innerJoin('doctors','asesorias.id_doctor', 'doctors.id_doctor').where({id_paciente: idPaciente, estado:'futura'})
+                    .innerJoin('users','doctors.user_id', 'users.id').fetch();
+                return response.status(201).json( {data} );
               } catch (error) {
                   return response.status(500).json({
                     message: 'Algo salió mal. Intenta otra vez o contacta a un administrador.',
@@ -134,11 +134,8 @@ class AsesoriaController {
               }
             
         }
-      
-    
-    
-    
     }
+
     async final ({ request, response , auth }) {
         const user = await auth.getUser();
         const role= user.role;
@@ -176,12 +173,10 @@ class AsesoriaController {
                     message: 'Algo salió mal. Intenta otra vez o contacta a un administrador.',
                     error
                   });
-              }
-                  
-        }
-        
-            
+              }         
+        }       
     }
+
     async getHistorial ({ response , auth }) {
         const user = await auth.getUser();
         const role= user.role;
@@ -204,26 +199,26 @@ class AsesoriaController {
               }
           
         }
+
         if (role == 'paciente') {
             // Cargar al paciente cuyo user_id coincide con user.id
             const paciente_data =  await Paciente.findBy('user_id', user.id);
             const idPaciente = paciente_data.id_paciente;
             try {
                 const data = await Asesoria.query().select('doctors.id_doctor','nombre', 'apellido', 'fecha', 'id_asesoria','ev_doc','com_doc','diagnostico')
-            .innerJoin('doctors','asesorias.id_doctor', 'doctors.id_doctor').where({id_paciente: idPaciente, estado:'pasada'})
-            .innerJoin('users','doctors.user_id', 'users.id').fetch();
-            return response.status(201).json({
-                data
-            });
-              } catch (error) {
+                    .innerJoin('doctors','asesorias.id_doctor', 'doctors.id_doctor').where({id_paciente: idPaciente, estado:'pasada'})
+                    .innerJoin('users','doctors.user_id', 'users.id').fetch();
+            
+                return response.status(201).json({data});
+            } catch (error) {
                   return response.status(500).json({
                     message: 'Algo salió mal. Intenta otra vez o contacta a un administrador.',
                     error
                   });
-              }
-            
+                }
         }
     }
+
     async getComentarios ({ params,response , auth }) {
         const user = await auth.getUser();
         const role= user.role;
@@ -277,13 +272,7 @@ class AsesoriaController {
                   });
               }
             
-        }      
-    
-
-
-
-
-
+    }
 }
 
 module.exports = AsesoriaController
