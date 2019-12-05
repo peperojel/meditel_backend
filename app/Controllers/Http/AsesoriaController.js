@@ -139,14 +139,13 @@ class AsesoriaController {
     async final ({ request, response , auth }) {
         const user = await auth.getUser();
         const role= user.role;
-        const { id_asesoria,rating,comentario,diagnostico } = request.all();
+        const { id_asesoria,rating,comentario } = request.all();
         const historial = await Asesoria.findBy('id_asesoria', id_asesoria);
         historial.estado="pasada";
         if (role == 'medico') {
             
             historial.ev_pac = rating;
             historial.com_pac = comentario;
-            historial.diagnostico = diagnostico;
             try {
                 await historial.save();             
             return response.status(201).json({
@@ -273,6 +272,30 @@ class AsesoriaController {
               }
             
     }
+    async diagnosticar ({ request, response , auth }) {
+        const user = await auth.getUser();
+        const role= user.role;
+        const { id_asesoria,diagnostico } = request.all();
+        const historial = await Asesoria.findBy('id_asesoria', id_asesoria);
+        historial.estado="evaluar";
+        if (role == 'medico') {
+            historial.diagnostico = diagnostico;
+            try {
+                await historial.save();             
+            return response.status(201).json({
+                message: 'Paciente diagnosticado exitosamente'
+            });
+              } catch (error) {
+                  return response.status(500).json({
+                    message: 'Algo salió mal. Intenta otra vez o contacta a un administrador.',
+                    error
+                  });
+              }
+            
+        }
+             
+    }
+
 }
 
 module.exports = AsesoriaController
