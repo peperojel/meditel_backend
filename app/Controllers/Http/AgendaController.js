@@ -1,9 +1,4 @@
 'use strict'
-const Doctor = use('App/Models/Doctor');
-const Database = use('Database');
-const User = use('App/Models/User');
-const Paciente =use('App/Models/Paciente');
-const Asesoria =use('App/Models/Asesoria');
 const Agenda =use('App/Models/Agenda');
 
 class AgendaController {
@@ -25,7 +20,7 @@ class AgendaController {
             await Agenda.query().where({id_doctor:idDoctor}).delete();
             await Agenda.createMany(bloquesReady);
             return response.status(201).json({
-                message: "Bloque de agenda se ha creado exitosamente "
+                message: "Horario guardado de forma exitosa"
             });
         } catch (error) {
             return response.status(500).json({

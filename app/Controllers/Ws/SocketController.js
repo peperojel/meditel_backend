@@ -108,6 +108,22 @@ class SocketController {
           data: data
         });
         break;
+      // Lógica de Videollamada
+      case 'videollamada:ready':
+        this.updateState([this.socket.id, data.to_socket])
+        break;
+      case 'videollamada:finished':
+          this.socket.emitTo('message',
+          {
+            type: 'videollamada:finished',
+            data:
+            {
+              from_socket: this.socket.id
+            }
+          },
+          [data.to_socket]
+        );
+        break;
       default:
         // console.log("Default case")
       break;
@@ -159,17 +175,17 @@ class SocketController {
     await sc.save();
   }
 
-  async updateState (sc, topic) {
-    sc.is_ready = true
-    await sc.save()
+  async updateState (toSockets) {
+    this.sc.is_ready = true
+    await this.sc.save()
     const part = await SocketConnection
           .query()
           .where({
-            topic: topic,
+            topic: this.socket.topic,
             is_ready: true})
           .fetch()
     if(part.toJSON().length === 2) {
-      this.sendReady();
+      this.sendReady(toSockets);
     }
   }
 
@@ -177,11 +193,11 @@ class SocketController {
     await sc.delete();
   }
 
-  sendReady = () => {
-    this.socket.broadcastToAll('message', {
-      type: 'asesoria:ready',
+  sendReady = (toSockets) => {
+    this.socket.emitTo('message', {
+      type: 'videollamada:ready',
       data: ''
-    });
+    }, toSockets);
   }
 }
 
