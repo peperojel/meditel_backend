@@ -12,4 +12,5 @@ module.exports = () => {
     Route.get('historial', 'AsesoriaController.getHistorial').middleware('jwtAuth');
     Route.get('agendados/:id', 'AsesoriaController.getAgendados').middleware('jwtAuth');
     Route.post('diagnosticar', 'AsesoriaController.diagnosticar').middleware('jwtAuth');
+    Route.get('estado', 'AsesoriaController.getEstado').middleware('jwtAuth');
 } 

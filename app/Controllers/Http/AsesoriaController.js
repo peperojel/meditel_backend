@@ -4,6 +4,7 @@ const Database = use('Database');
 const User = use('App/Models/User');
 const Paciente =use('App/Models/Paciente');
 const Asesoria =use('App/Models/Asesoria');
+const SocketConnection = use('App/Models/SocketConnection')
 
 class AsesoriaController {
 
@@ -277,7 +278,7 @@ class AsesoriaController {
         const role= user.role;
         const { id_asesoria,diagnostico } = request.all();
         const historial = await Asesoria.findBy('id_asesoria', id_asesoria);
-        historial.estado="evaluar";
+        historial.estado="evaluación";
         if (role == 'medico') {
             historial.diagnostico = diagnostico;
             try {
@@ -294,6 +295,58 @@ class AsesoriaController {
             
         }
              
+    }
+    async getEstado ({ response , auth }) {
+        const user = await auth.getUser();
+        const role= user.role;
+        if (role == 'medico') {
+            const doctor_data = await Doctor.findBy('user_id', user.id);
+            const idDoctor = doctor_data.id_doctor;
+            try {
+                const asesoria= await Asesoria.query().select()
+            .where({id_doctor: idDoctor, estado:'pasada'})
+            .orWhere({id_doctor: idDoctor, estado:'futura'})
+            .first();
+             const idAsesoria= asesoria.id_asesoria;  
+             const estadoAsesoria= asesoria.estado;
+             const idPaciente= asesoria.id_paciente;
+             //buscar id usuario del paciente
+             const paciente = await Paciente.findBy('id_paciente', idPaciente);
+             const user = await User.findBy('id', paciente.user_id);
+             const userID= user.uid;
+             const nombre= user.nombre;
+             const apellido= user.apellido;
+
+             if(estadoAsesoria=='en curso'){
+                const socket = await SocketConnection.findBy('user_id', userID);
+                const socketID=socket.socket_id;
+                return response.status(201).json({
+                    socketID,
+                    idAsesoria,
+                    nombre,
+                    apellido
+                    
+                });
+                 
+             }else{
+                return response.status(201).json({
+                    idAsesoria,
+                    nombre,
+                    apellido
+                    
+                });
+             }          
+            
+              } catch (error) {
+                  return response.status(500).json({
+                    message: 'Algo salió mal. Intenta otra vez o contacta a un administrador.',
+                    error
+                  });
+              }
+            
+          
+        }
+        
     }
 
 }
