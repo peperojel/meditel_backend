@@ -8,9 +8,14 @@ class Doctor extends Model {
         super.boot();
         this.addHook('beforeCreate', 'DoctorHook.setDefaults');
     }
+    
     agenda () {
         return this.hasMany('App/Models/Agenda');
       }
+    
+    asesorias () {
+        return this.hasMany('App/Models/Asesoria');
+    }
 }
 
 module.exports = Doctor

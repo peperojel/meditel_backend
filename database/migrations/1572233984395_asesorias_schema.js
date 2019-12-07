@@ -8,8 +8,8 @@ class AsesoriasSchema extends Schema {
     this.create('asesorias', (table) => {
       table.increments();
       table.string('id_asesoria').index('id_asesoria');
-      table.string('id_doctor').references('id_doctor').inTable('doctors').onDelete('CASCADE');
-      table.string('id_paciente').references('id_paciente').inTable('pacientes').onDelete('CASCADE');
+      table.string('id_doctor').references('id_doctor').inTable('doctors');
+      table.string('id_paciente').references('id_paciente').inTable('pacientes');
       table.string('fecha');
       table.integer('ev_pac')
       table.integer('ev_doc')

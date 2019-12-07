@@ -40,8 +40,7 @@ class AgendaController {
                     message: 'Algo salió mal. Intenta otra vez o contacta a un administrador.',
                     error
                   });
-            }
-            
+            }                                    
     }
 }
 
