@@ -8,7 +8,7 @@ class Asesoria extends Model {
     super.boot();
     this.addHook('beforeCreate', 'AsesoriaHook.setDefaults');
     // this.addHook('beforeSave' , 'AsesoriaHook.fixFecha2');
-    this.addHook('afterFetch' , 'AsesoriaHook.fixFecha');
+    // this.addHook('afterFetch' , 'AsesoriaHook.fixFecha');
   }
 
   static castDates(field, value) {
@@ -19,6 +19,10 @@ class Asesoria extends Model {
 
   messages () {
     return this.hasMany('App/Models/ChatMessage');
+  }
+
+  paciente () {
+    return this.belongsTo('App/Models/Paciente', 'id_paciente', 'id_paciente');
   }
 
 }

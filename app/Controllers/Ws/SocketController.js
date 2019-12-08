@@ -1,6 +1,8 @@
 'use strict'
 
-const SocketConnection = use('App/Models/SocketConnection')
+const Event = use('Event');
+const SocketConnection = use('App/Models/SocketConnection');
+const Asesoria = use('App/Models/Asesoria');
 
 class SocketController {
   constructor ({ socket, request, auth }) {
@@ -17,53 +19,16 @@ class SocketController {
     switch (type) {
       // Lógica de asesoría
       case 'asesoria:request':
-        this.sendRequest();
+        Event.fire('new::asesoria', this);
         break;
       case 'asesoria:accept':
-        this.socket.emitTo('message',
-          { type: 'asesoria:accept',
-            data: {
-              from_socket: this.socket.id
-            }
-          },
-          [data.to_socket]
-        );
+        Event.fire('accept::'+data.id_asesoria, this, data);
         break;
       case 'asesoria:refuse':
-        this.socket.emitTo('message',
-          {
-            type: 'asesoria:refuse',
-            data:
-            {
-              from_socket: this.socket.id
-            }
-          },
-          [data.to_socket]
-        );
-        break;
-      case 'asesoria:diagnostic':
-        this.socket.emitTo('message',
-          {
-            type: 'asesoria:diagnostic',
-            data:
-            {
-              from_socket: this.socket.id
-            }
-          },
-          [data.to_socket]
-        );
+        Event.fire('refuse::'+data.id_asesoria, this, data);
         break;
       case 'asesoria:finished':
-        this.socket.emitTo('message',
-          {
-            type: 'asesoria:finished',
-            data:
-            {
-              from_socket: this.socket.id
-            }
-          },
-          [data.to_socket]
-        );
+        Event.fire('finished::asesoria', this, data);
         break;
       // Lógica de chat
       case 'chat:videollamada_request':
@@ -134,42 +99,19 @@ class SocketController {
     this.deleteConnection(this.sc)
   }
 
-  // Métodos de uso interno
-  async sendRequest () {
-    const doctor_socket = await SocketConnection
-      .query()
-      .where({
-        topic: this.socket.topic,
-        role: 'medico'
-      })
-      .first()
-    
-    this.socket.emitTo('message',{
-      type: 'asesoria:request',
-      data: {
-        nombre: this.auth.user.nombre,
-        apellido: this.auth.user.apellido,
-        from_socket: this.socket.id
-        }
-      },
-      [doctor_socket.socket_id]
-    )
-  }
-
-
   async storeConnection () {
     const sc = await SocketConnection.findOrCreate(
       { 
         topic: this.socket.topic,
-        user_id: this.auth.user.uid 
+        id_user: this.auth.user.uid 
       },
       { 
         topic: this.socket.topic,
-        user_id: this.auth.user.uid,
+        id_user: this.auth.user.uid,
         role: this.auth.user.role,
       }
     )
-    sc.socket_id = this.socket.id
+    sc.id_socket = this.socket.id
     sc.is_ready = false
     this.sc = sc
     await sc.save();

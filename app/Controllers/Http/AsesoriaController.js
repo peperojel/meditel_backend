@@ -137,46 +137,6 @@ class AsesoriaController {
         }
     }
 
-    async final ({ request, response , auth }) {
-        const user = await auth.getUser();
-        const role= user.role;
-        const { id_asesoria,rating,comentario } = request.all();
-        const historial = await Asesoria.findBy('id_asesoria', id_asesoria);
-        historial.estado="pasada";
-        if (role == 'medico') {
-            
-            historial.ev_pac = rating;
-            historial.com_pac = comentario;
-            try {
-                await historial.save();             
-            return response.status(201).json({
-                message: 'Paciente evaluado y diagnosticado exitosamente'
-            });
-              } catch (error) {
-                  return response.status(500).json({
-                    message: 'Algo salió mal. Intenta otra vez o contacta a un administrador.',
-                    error
-                  });
-              }
-            
-        }
-        if (role == 'paciente') {
-            historial.ev_doc = rating;
-            historial.com_doc = comentario;
-            try {
-                await historial.save();             
-            return response.status(201).json({
-                message: 'Dr evaluado  exitosamente'
-            });
-              } catch (error) {
-                  return response.status(500).json({
-                    message: 'Algo salió mal. Intenta otra vez o contacta a un administrador.',
-                    error
-                  });
-              }         
-        }       
-    }
-
     async getHistorial ({ response , auth }) {
         const user = await auth.getUser();
         const role= user.role;
@@ -273,80 +233,102 @@ class AsesoriaController {
               }
             
     }
+
     async diagnosticar ({ request, response , auth }) {
-        const user = await auth.getUser();
-        const role= user.role;
-        const { id_asesoria,diagnostico } = request.all();
-        const historial = await Asesoria.findBy('id_asesoria', id_asesoria);
-        historial.estado="evaluación";
-        if (role == 'medico') {
-            historial.diagnostico = diagnostico;
-            try {
-                await historial.save();             
+        const docInstance = await auth.user.doctors().fetch();
+        const { id_asesoria, diagnostico } = request.all();
+        const asesoriaBruto = await docInstance.asesorias()
+            .where('id_asesoria', id_asesoria)
+            .fetch();
+        const asesoriaInstance = asesoriaBruto.rows[0];
+        asesoriaInstance.estado="evaluación";
+        asesoriaInstance.diagnostico = diagnostico;
+        try {
+            await asesoriaInstance.save();             
             return response.status(201).json({
                 message: 'Paciente diagnosticado exitosamente'
             });
-              } catch (error) {
-                  return response.status(500).json({
-                    message: 'Algo salió mal. Intenta otra vez o contacta a un administrador.',
-                    error
-                  });
-              }
-            
-        }
-             
+        } catch (error) {
+            return response.status(500).json({
+                message: 'Algo salió mal. Intenta otra vez o contacta a un administrador.',
+                error
+            });
+        }    
     }
-    async getEstado ({ response , auth }) {
+
+    async evaluar ({ request, response , auth }) {
         const user = await auth.getUser();
         const role= user.role;
+        const { id_asesoria,rating,comentario } = request.all();
+        const historial = await Asesoria.findBy('id_asesoria', id_asesoria);
+
         if (role == 'medico') {
-            const doctor_data = await Doctor.findBy('user_id', user.id);
+            historial.ev_pac = rating;
+            historial.com_pac = comentario;
+            historial.estado="pasada";
+            try {
+                await historial.save();             
+            return response.status(201).json({
+                message: 'Paciente evaluado y diagnosticado exitosamente'});
+            } catch (error) {
+                  return response.status(500).json({
+                    message: 'Algo salió mal. Intenta otra vez o contacta a un administrador.',
+                    error});
+            }
+        }
+
+        if (role == 'paciente') {
+            historial.ev_doc = rating;
+            historial.com_doc = comentario;
+            try {
+                await historial.save();             
+                return response.status(201).json({
+                    message: 'Dr evaluado  exitosamente'});
+            } catch (error) {
+                  return response.status(500).json({
+                    message: 'Algo salió mal. Intenta otra vez o contacta a un administrador.',
+                    error});
+            }         
+        }    
+    }
+
+    async getEstado ({ response , auth }) {
+        if (auth.user.role == 'medico') {
+            const doctor_data = await auth.user.doctors().fetch();
             const idDoctor = doctor_data.id_doctor;
+            const respuesta = {};
             try {
                 const asesoria= await Asesoria.query().select()
-            .where({id_doctor: idDoctor, estado:'pasada'})
-            .orWhere({id_doctor: idDoctor, estado:'futura'})
-            .first();
-             const idAsesoria= asesoria.id_asesoria;  
-             const estadoAsesoria= asesoria.estado;
-             const idPaciente= asesoria.id_paciente;
-             //buscar id usuario del paciente
-             const paciente = await Paciente.findBy('id_paciente', idPaciente);
-             const user = await User.findBy('id', paciente.user_id);
-             const userID= user.uid;
-             const nombre= user.nombre;
-             const apellido= user.apellido;
-
-             if(estadoAsesoria=='en curso'){
-                const socket = await SocketConnection.findBy('user_id', userID);
-                const socketID=socket.socket_id;
-                return response.status(201).json({
-                    socketID,
-                    idAsesoria,
-                    nombre,
-                    apellido
-                    
-                });
-                 
-             }else{
-                return response.status(201).json({
-                    idAsesoria,
-                    nombre,
-                    apellido
-                    
-                });
-             }          
-            
-              } catch (error) {
+                    .whereIn('estado', ['en curso', 'diagnóstico', 'evaluación'])
+                    .andWhere('id_doctor', idDoctor)
+                    .first();
+                if ( asesoria === null ) {
+                    return response.status(201).json(respuesta);
+                }
+                respuesta.id_asesoria = asesoria.id_asesoria;
+                respuesta.estado = asesoria.estado;
+                //buscar id usuario del paciente
+                const paciente = await asesoria.paciente().fetch()                
+                const userPaciente = await paciente.user().fetch();                                
+                respuesta.nombre = userPaciente.nombre;
+                respuesta.apellido = userPaciente.apellido;
+                if ( asesoria.estado === 'en curso' ) {
+                    // const socket = await SocketConnection.findBy('user_id', userPaciente_id);
+                    const socket = await SocketConnection.query().select('id_socket')
+                        .where( {id_user: userPaciente.uid, topic: 'asesoria:'+idDoctor})
+                        .first();
+                    respuesta.to_socket = socket.id_socket;
+                    return response.status(201).json(respuesta);
+                } else {
+                    return response.status(201).json(respuesta);
+                }
+            } catch (error) {
                   return response.status(500).json({
                     message: 'Algo salió mal. Intenta otra vez o contacta a un administrador.',
                     error
                   });
-              }
-            
-          
-        }
-        
+            }                  
+        }    
     }
 
 }

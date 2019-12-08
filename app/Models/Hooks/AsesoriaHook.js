@@ -4,13 +4,21 @@ const moment = require('moment');
 const AsesoriaHook = exports = module.exports = {}
 
 AsesoriaHook.setDefaults = async (asesoriaInstance) => {
-    asesoriaInstance.id_asesoria = Math.random().toString(18).substr(2, 8);
+    if( typeof asesoriaInstance.fecha === 'undefined' ) {
+        asesoriaInstance.fecha = moment().utcOffset("-03:00").format();
+    }
     asesoriaInstance.ev_pac = 5.0;
     asesoriaInstance.ev_doc = 5.0;
     asesoriaInstance.com_pac = "Sin comentarios";
     asesoriaInstance.com_doc = "Sin comentarios";
     asesoriaInstance.diagnostico = "Sin comentarios";
-    asesoriaInstance.estado = "futura";
+    if( typeof asesoriaInstance.id_asesoria === 'undefined' ) {
+        asesoriaInstance.id_asesoria = Math.random().toString(18).substr(2, 8);
+    }
+    if( typeof asesoriaInstance.estado === 'undefined' ) {
+        asesoriaInstance.estado = "futura";
+    }
+    
 }
 
 /*

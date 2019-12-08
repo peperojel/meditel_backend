@@ -14,7 +14,7 @@ class Doctor extends Model {
       }
     
     asesorias () {
-        return this.hasMany('App/Models/Asesoria');
+        return this.hasMany('App/Models/Asesoria', 'id_doctor', 'id_doctor');
     }
 }
 

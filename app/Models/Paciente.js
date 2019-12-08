@@ -22,6 +22,10 @@ class Paciente extends Model {
   asesorias () {
     return this.hasMany('App/Models/Asesoria');
   }
+
+  user () {
+    return this.belongsTo('App/Models/User');
+  }
 }
 
 module.exports = Paciente
