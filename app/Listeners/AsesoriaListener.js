@@ -38,7 +38,7 @@ AsesoriaListener.create = async (scInstance) => {
       [scInstance.socket.id]);
     }
     return;
-    }, 2000);
+    }, 30000);
 
   Event.on('accept::'+newAsesoria_id , async (scInstance_doc, data) => {
     clearTimeout(timerId);
