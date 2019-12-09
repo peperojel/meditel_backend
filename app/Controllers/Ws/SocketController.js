@@ -31,6 +31,18 @@ class SocketController {
         Event.fire('finished::asesoria', this, data);
         break;
       // Lógica de chat
+      case 'chat:update':
+        this.socket.emitTo('message',
+          {
+            type: 'chat:update',
+            data:
+            {
+              from_socket: this.socket.id
+            }
+          },
+          [data.to_socket]
+        );
+        break;
       case 'chat:videollamada_request':
         this.socket.emitTo('message',
           {

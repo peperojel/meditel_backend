@@ -11,7 +11,7 @@ class AsesoriaPermission {
    */
   async handle ({ request }, next) {
     // call next to advance the request
-    console.log(request)
+    // console.log(request)
     await next()
   }
 }

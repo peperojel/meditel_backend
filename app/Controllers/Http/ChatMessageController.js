@@ -1,11 +1,12 @@
 'use strict'
 
+const moment = require('moment');
 const ChatMessage =use('App/Models/ChatMessage');
 
 class ChatMessageController {
   /**
    * POST api/message/post
-   * Muestra los 20 mensajes más recientes de una determinada asesoría
+   * Crea una nueva entrada en la tabla ChatMessage de una determinada sesión de chat.
    *
    * @param {Parámetros (id,fecha)} params
    * @param {Request} request
@@ -25,6 +26,42 @@ class ChatMessageController {
     try {
       await newMessage.save();
       response.created();
+    } catch (error) {
+      response.internalServerError({
+        message: 'Ocurrió un error en el servidor, contacta a un administrador',
+        error: error
+      });
+    }
+  }
+
+  /**
+   * POST api/message/getlast/
+   * Responde todos los mensajes a partir de timestamp
+   *
+   * @param {Parámetros (id,fecha)} params
+   * @param {Request} request
+   * @param {Response} response
+   * @param {object} auth
+   */
+  async getLastMessages ({ request, response, auth }) {
+    const { id_asesoria, timestamp } = request.all();
+    const fechaLastMessage = moment(timestamp).utcOffset("-03:00").format();
+
+    try {
+      const lastMessageBruto = await auth.user.messages()
+        .where( { created_at: fechaLastMessage, id_asesoria: id_asesoria })
+        .fetch();
+
+      const lastMessage_id = lastMessageBruto.rows[0].id;
+
+      const newMessages = await ChatMessage.query()
+        .orderBy('chat_messages.id', 'desc')
+        .select('users.role', 'type', 'content', 'chat_messages.created_at')
+        .where('chat_messages.id', '>', lastMessage_id)
+        .innerJoin('users','chat_messages.id_user', 'users.uid')
+        .fetch();
+      
+      response.created(newMessages);
     } catch (error) {
       response.internalServerError({
         message: 'Ocurrió un error en el servidor, contacta a un administrador',

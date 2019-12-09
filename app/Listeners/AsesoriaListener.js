@@ -111,11 +111,11 @@ AsesoriaListener.finished = async (scInst_doc, data) => {
   }
 
   scInst_doc.socket.emitTo('message',
-          {
-            type: 'asesoria:finished',
-            data: ''
-          },
-          [data.to_socket]
-        );
-
+    {
+      type: 'asesoria:finished',
+      data: ''
+    },
+    [data.to_socket]);
+  
+  return;
 }

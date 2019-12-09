@@ -7,6 +7,6 @@ module.exports = () => {
     Route.post('post', 'ChatMessageController.post')
         .middleware(['jwtAuth', 'asesoriaPerm']);
 
-    Route.get('load/:id/:fecha?', 'ChatMessageController.load')
+    Route.post('getlast', 'ChatMessageController.getLastMessages')
         .middleware(['jwtAuth', 'asesoriaPerm']);
 }

@@ -38,6 +38,9 @@ class User extends Model {
     return this.hasMany('App/Models/Paciente');
   }
 
+  messages ( ) {
+    return this.hasMany('App/Models/ChatMessage', 'uid', 'id_user');
+  }
   // roles
   static get roles () {
     return ['superadmin', 'admin', 'paciente', 'medico'];
