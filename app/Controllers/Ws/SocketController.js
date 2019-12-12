@@ -79,12 +79,19 @@ class SocketController {
           [data.to_socket]
         );
         break;
-      case 'asesoria:signaling':
-        this.socket.broadcast('message', {
-          type: 'asesoria:signaling',
-          data: data
-        });
-        break;
+      case 'videollamada:signaling':
+        this.socket.emitTo('message',
+          {
+            type: 'videollamada:signaling',
+            data:
+            { 
+              signal: data.signal,
+              from_socket: this.socket.id
+            }
+          },
+          [data.to_socket]
+        );
+      break;
       // Lógica de Videollamada
       case 'videollamada:ready':
         this.updateState([this.socket.id, data.to_socket])
