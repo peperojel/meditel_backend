@@ -10,13 +10,15 @@ class AsesoriasSchema extends Schema {
       table.string('id_asesoria').index('id_asesoria');
       table.string('id_doctor').references('id_doctor').inTable('doctors');
       table.string('id_paciente').references('id_paciente').inTable('pacientes');
-      table.string('fecha');
+      table.int('fecha');
       table.integer('ev_pac')
       table.integer('ev_doc')
       table.string('com_doc')
       table.string('com_pac')
       table.string('diagnostico')
       table.string('estado')
+      table.boolean('notificado')
+      table.string('motivo')
       table.timestamps();
     })
   }
