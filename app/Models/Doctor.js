@@ -16,6 +16,10 @@ class Doctor extends Model {
     asesorias () {
         return this.hasMany('App/Models/Asesoria', 'id_doctor', 'id_doctor');
     }
+
+    user () {
+        return this.belongsTo('App/Models/User');
+    }
 }
 
 module.exports = Doctor

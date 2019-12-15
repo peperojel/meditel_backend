@@ -6,6 +6,8 @@ const Paciente =use('App/Models/Paciente');
 const Asesoria =use('App/Models/Asesoria');
 const SocketConnection = use('App/Models/SocketConnection')
 
+const Event = use('Event')
+
 class AsesoriaController {
 
     async create ({ request, response , auth }) {
@@ -16,12 +18,15 @@ class AsesoriaController {
         .first();
         
         const idPaciente = paciente_data.id_paciente;
-        const { id_doctor, fecha } = request.all();
-        
+        const { id_doctor, fecha, motivo} = request.all();
+
         const asesoria = new Asesoria();
         asesoria.id_doctor = id_doctor;
         asesoria.id_paciente = idPaciente;
         asesoria.fecha = fecha;
+        asesoria.motivo = motivo;
+
+
     
         try {
           await asesoria.save();
@@ -329,6 +334,14 @@ class AsesoriaController {
                   });
             }                  
         }    
+    }
+
+    // Función provisoria que gatilla eventos de inicio de asesoria
+    async asesoriaStart( {request, response} ) {
+        const { id_asesoria } = request.all();
+        // console.log(id_asesoria)
+        Event.fire('asesoria::notify', [id_asesoria]);
+        
     }
 
 }

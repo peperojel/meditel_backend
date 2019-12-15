@@ -13,4 +13,6 @@ module.exports = () => {
     Route.get('agendados/:id', 'AsesoriaController.getAgendados').middleware('jwtAuth');
     Route.post('diagnosticar', 'AsesoriaController.diagnosticar').middleware('jwtAuth');
     Route.get('estado', 'AsesoriaController.getEstado').middleware('jwtAuth');
+    // Endpoint provisorio
+    Route.post('notificar', 'AsesoriaController.asesoriaStart');
 } 
