@@ -158,7 +158,7 @@ AsesoriaListener.notify = async ( idAsesoriasArray ) => {
       console.log('Successfully sent message:', response);
     });
 
-    // asesoria.notificada = true;
+    asesoria.notificado = true;
     await asesoria.save();
   })
   console.log(asesoriasToNotify);
