@@ -22,7 +22,7 @@ module.exports = {
     type: Env.get('FIREBASE_CREDENTIAL_TYPE'),
     project_id: Env.get('FIREBASE_CREDENTIAL_PROJECT_ID'),
     private_key_id: Env.get('FIREBASE_CREDENTIAL_PRIVATE_KEY_ID'),
-    private_key: Env.get('FIREBASE_CREDENTIAL_PRIVATE_KEY'),
+    private_key: Env.get('FIREBASE_CREDENTIAL_PRIVATE_KEY').replace(/\\n/g, '\n'),
     client_email: Env.get('FIREBASE_CREDENTIAL_CLIENT_EMAIL'),
     client_id: Env.get('FIREBASE_CREDENTIAL_CLIENT_ID'),
     auth_uri: Env.get('FIREBASE_CREDENTIAL_AUTH_URI'),

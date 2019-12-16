@@ -4,7 +4,7 @@ const User = use('App/Models/User');
 const Doctor = use('App/Models/Doctor');
 const Paciente = use('App/Models/Paciente');
 const Mail = use('Mail');
-const Helpers = use('Helpers')
+const Helpers = use('Helpers');
 
 class AuthController {
 

@@ -16,9 +16,11 @@ class FirebaseTokenController {
     try {
       const entry = await FirebaseToken.findOrCreate(
         { user_id: auth.user.uid },
-        { user_id: auth.user.uid,
-          token: firebase_token }
-      )
+        { user_id: auth.user.uid }
+      );
+
+      entry.token = firebase_token;
+      
       await entry.save()
       response.created({message: 'El token de firebase se guardó exitosamente'})
     } catch (error) {

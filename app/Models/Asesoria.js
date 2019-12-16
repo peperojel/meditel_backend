@@ -25,6 +25,9 @@ class Asesoria extends Model {
     return this.belongsTo('App/Models/Paciente', 'id_paciente', 'id_paciente');
   }
 
+  doctor () {
+    return this.belongsTo('App/Models/Doctor', 'id_doctor', 'id_doctor');
+  }
 }
 
 module.exports = Asesoria

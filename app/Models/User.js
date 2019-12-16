@@ -28,7 +28,7 @@ class User extends Model {
   }
 
   firebase_token () {
-    return this.hasOne('App/Models/FirebaseToken');
+    return this.hasOne('App/Models/FirebaseToken', 'uid', 'user_id');
   }
   
   doctors () {

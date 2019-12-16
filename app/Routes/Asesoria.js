@@ -14,4 +14,6 @@ module.exports = () => {
     Route.post('diagnosticar', 'AsesoriaController.diagnosticar').middleware('jwtAuth');
     Route.get('correo', 'AsesoriaController.correo').middleware('jwtAuth');
     Route.get('estado', 'AsesoriaController.getEstado').middleware('jwtAuth');
+    // Endpoint provisorio
+    Route.post('notificar', 'AsesoriaController.asesoriaStart');
 } 

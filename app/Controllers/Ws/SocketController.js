@@ -17,7 +17,7 @@ class SocketController {
     const {type, data} = message
 
     switch (type) {
-      // Lógica de asesoría
+      // Lógica de handshake asesoría inmediata
       case 'asesoria:request':
         Event.fire('new::asesoria', this);
         break;
@@ -29,6 +29,28 @@ class SocketController {
         break;
       case 'asesoria:finished':
         Event.fire('finished::asesoria', this, data);
+        break;
+      // Lógica de handshake asesoría agendada 
+      case 'asesoria:agendada_ready':
+        Event.fire('agendada::ready', this, data.id_asesoria);
+        break;
+      case 'asesoria:paciente_ready':
+        this.socket.emitTo('message',
+          {
+            type: 'asesoria:paciente_ready',
+            data:
+            {
+              nombre: this.auth.user.nombre,
+              apellido: this.auth.user.apellido,
+              id_asesoria: data.id_asesoria,
+              from_socket: this.socket.id
+            }
+          },
+          [data.to_socket]
+        );
+        break;
+      case 'asesoria:medico_ready':
+        Event.fire('agendada::start', this, data);
         break;
       // Lógica de chat
       case 'chat:update':
@@ -79,22 +101,29 @@ class SocketController {
           [data.to_socket]
         );
         break;
-      case 'asesoria:signaling':
-        this.socket.broadcast('message', {
-          type: 'asesoria:signaling',
-          data: data
-        });
-        break;
       // Lógica de Videollamada
       case 'videollamada:ready':
         this.updateState([this.socket.id, data.to_socket])
         break;
       case 'videollamada:finished':
-          this.socket.emitTo('message',
+        this.socket.emitTo('message',
+        {
+          type: 'videollamada:finished',
+          data:
           {
-            type: 'videollamada:finished',
+            from_socket: this.socket.id
+          }
+        },
+        [data.to_socket]
+        );
+        break;
+      case 'videollamada:signaling':
+        this.socket.emitTo('message',
+          {
+            type: 'videollamada:signaling',
             data:
-            {
+            { 
+              signal: data.signal,
               from_socket: this.socket.id
             }
           },
