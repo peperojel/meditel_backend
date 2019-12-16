@@ -13,7 +13,6 @@ AsesoriaHook.setDefaults = async (asesoriaInstance) => {
     asesoriaInstance.com_doc = "Sin comentarios";
     asesoriaInstance.diagnostico = "Sin comentarios";
     asesoriaInstance.notificado = false;
-    asesoriaInstance.motivo = "Sin comentarios";
     if( typeof asesoriaInstance.id_asesoria === 'undefined' ) {
         asesoriaInstance.id_asesoria = Math.random().toString(18).substr(2, 8);
     }

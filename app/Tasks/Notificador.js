@@ -3,7 +3,8 @@
 const moment = require('moment');
 const Task = use('Task');
 const firebase = use('FirebaseAdmin');
-// Sumar Mail
+const Mail = use('Mail');
+const Helpers = use('Helpers')
 
 class Notificador extends Task {
   static get schedule () {
