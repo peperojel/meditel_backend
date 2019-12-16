@@ -6,6 +6,7 @@ const Asesoria = use('App/Models/Asesoria');
 const SocketConnection = use('App/Models/SocketConnection');
 const firebase = use('FirebaseAdmin');
 const Mail = use('Mail');
+const Helpers = use('Helpers');
 const AsesoriaListener = exports = module.exports = {}
 
 AsesoriaListener.create = async (scInstance) => {
@@ -131,7 +132,6 @@ AsesoriaListener.notify = async ( idAsesoriasArray ) => {
     const userPaciente = await pacienteInstance.user().fetch();
     const userDoctor = await doctorInstance.user().fetch();
     const tokenPaciente = await userPaciente.firebase_token().fetch();
-    // tokenPaciente.token = "d20ZWIPXGhk:APA91bEYHm0C62_s1QrOGMC9yR7xrftSQbdxoTyVOZDmss1l1IrPr961JZccinCo9cWJp6-FigTF1gns5inbJbORUXnEcybKEy9BQA2NkBrUqlhm192E4sLQsqczQ9nOnihUWMAry9Kw"
     
     await Mail.send('emails.notificacion', {
         nombre_medico: userDoctor.nombre, 
@@ -158,9 +158,62 @@ AsesoriaListener.notify = async ( idAsesoriasArray ) => {
       console.log('Successfully sent message:', response);
     });
 
+    asesoria.estado = "en espera";
     asesoria.notificado = true;
     await asesoria.save();
   })
-  console.log(asesoriasToNotify);
-  console.log('Cadena terminada');
+}
+
+AsesoriaListener.asesoriaReady = async ( sc, idAsesoriaReady ) => {
+  const asesoriaInstance = await Asesoria.query().where('id_asesoria', idAsesoriaReady).first();
+  const pacienteInstance = await asesoriaInstance.paciente().fetch();
+  const userPaciente = await pacienteInstance.user().fetch();
+  const tokenPaciente = await userPaciente.firebase_token().fetch();
+
+  firebase.messaging().send({
+    token: tokenPaciente.token,
+    notification: {
+      title:"Tu médico está listo para comenzar la asesoría",
+      body: sc.auth.user.nombre+' '+sc.auth.user.apellido+' te espera!'
+    },
+    data: {
+      id_socket: sc.socket.id,
+      id_asesoria: idAsesoriaReady,
+      id_doctor: asesoriaInstance.id_doctor
+    }
+  }).then((response) => {
+  // Response is a message ID string.
+    console.log('Successfully sent message:', response);
+  });
+
+  //Simulación de notificación:
+  // sc.socket.broadcastToAll('message', {
+  //   type: "agendada_ready",
+  //   data: {
+  //     id_socket: sc.socket.id,
+  //     id_asesoria: idAsesoriaReady,
+  //     id_doctor: asesoriaInstance.id_doctor
+  //   }
+  // })
+}
+
+AsesoriaListener.agendadaStart = async ( sc, data ) => {
+  
+  try {
+    const asesoriaInstance = await Asesoria.query().where('id_asesoria', data.id_asesoria).first();
+    asesoriaInstance.estado = 'en curso';
+    await asesoriaInstance.save();
+  } catch ( error ) {
+    console.log(error);
+  }
+  
+  sc.socket.emitTo('message', 
+    {
+      type: 'asesoria:medico_ready',
+      data: {
+        from_socket: sc.socket.id
+      }
+    },
+    [data.to_socket]
+  );
 }

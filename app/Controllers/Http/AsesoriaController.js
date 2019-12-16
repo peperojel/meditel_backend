@@ -304,7 +304,7 @@ class AsesoriaController {
             const respuesta = {};
             try {
                 const asesoria= await Asesoria.query().select()
-                    .whereIn('estado', ['en curso', 'diagnóstico', 'evaluación'])
+                    .whereIn('estado', ['en espera', 'en curso', 'diagnóstico', 'evaluación'])
                     .andWhere('id_doctor', idDoctor)
                     .first();
                 if ( asesoria === null ) {
