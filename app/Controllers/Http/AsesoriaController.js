@@ -5,65 +5,7 @@ const User = use('App/Models/User');
 const Paciente =use('App/Models/Paciente');
 const Asesoria =use('App/Models/Asesoria');
 const SocketConnection = use('App/Models/SocketConnection')
-const Mail = use('Mail');
-const Helpers = use('Helpers')
-//borrar despues los ultimos 2
 class AsesoriaController {
-
-    async correo ({ response }) {
-        
-        const user= await Asesoria.query().select()
-        .innerJoin('doctors','asesorias.id_doctor', 'doctors.id_doctor')
-        .where('estado','futura')
-        .innerJoin('users','doctors.user_id', 'users.id')
-        .fetch();
-        
-        
-        
-        try {
-            const users = user.toJSON();
-            let fooData = [];
-            users.rows.forEach(de => {
-            fooData.push(de['email'])
-            })
-              //for(let i in users.rows) {
-                //let info = users.rows[i]
-                //fooData.push(info["nombre"])
-                
-               // console.log(info.name) // you should be able to have access to name now
-               // await Mail.send('emails.asesoria', {  name: info.nombre, motivo: info.motivo, hora: info.fecha }, (message) => {
-               // message.to(info.email);
-               // message.embed(Helpers.publicPath('logo-meditel-color.png'), 'logo');
-               // message.embed(Helpers.publicPath('logo-meditel-blanco.png'), 'logo2');
-               // message.from('no-reply@meditel.cl', 'MediTel');
-               // message.subject('Asesoría por comenzar ' + info.nombre);
-              //});
-            
-            
-            
-            //}
-            return response.status(201).json({
-                // Esta respuesta debe ser revisada
-               //message: 'Se han enviado los correos'
-               fooData
-            
-            });
-        } catch (error) {
-                return response.status(500).json({
-                  message: 'Algo salió mal. Intenta otra vez o contacta a un administrador.',
-                  error
-                });
-            }
-        }
-
-
-
-
-
-
-
-
-
     async create ({ request, response , auth }) {
     // Cargar al paciente cuyo user_id coincide con user.id
         const paciente_data = await Database
